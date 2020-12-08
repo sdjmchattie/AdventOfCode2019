@@ -12,7 +12,7 @@ int_code = IntCode(int_code_input)
 int_code.run()
 
 print('Part 1')
-print('  After running, position 0 contains: {}'.format(int_code.result_code[0]))
+print('  After running, position 0 contains: {}'.format(int_code.code[0]))
 
 
 def find_noun_verb(input_code, target_output):
@@ -24,8 +24,8 @@ def find_noun_verb(input_code, target_output):
             int_code_machine = IntCode(new_int_code)
             int_code_machine.run()
 
-            if int_code_machine.result_code is not None and \
-                    int_code_machine.result_code[0] == target_output:
+            if int_code_machine.code is not None and \
+                    int_code_machine.code[0] == target_output:
                 return noun_candidate, verb_candidate
 
 
