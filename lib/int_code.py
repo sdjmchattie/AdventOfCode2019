@@ -33,6 +33,28 @@ class IntCode:
                 elif op_code == 4:
                     self.output = self.__get_value(pos + 1, value_modes[0])
                     pos += 2
+                elif op_code == 5:
+                    if self.__get_value(pos + 1, value_modes[0]) != 0:
+                        pos = self.__get_value(pos + 2, value_modes[1])
+                    else:
+                        pos += 3
+                elif op_code == 6:
+                    if self.__get_value(pos + 1, value_modes[0]) == 0:
+                        pos = self.__get_value(pos + 2, value_modes[1])
+                    else:
+                        pos += 3
+                elif op_code == 7:
+                    new_value = 0
+                    if self.__get_value(pos + 1, value_modes[0]) < self.__get_value(pos + 2, value_modes[1]):
+                        new_value = 1
+                    self.__set_value(pos + 3, new_value, value_modes[2])
+                    pos += 4
+                elif op_code == 8:
+                    new_value = 0
+                    if self.__get_value(pos + 1, value_modes[0]) == self.__get_value(pos + 2, value_modes[1]):
+                        new_value = 1
+                    self.__set_value(pos + 3, new_value, value_modes[2])
+                    pos += 4
                 else:
                     raise ValueError('Operator code {} is not recognised.'.format(op_code))
         except IndexError:
