@@ -51,7 +51,7 @@ def shortest_route_to_intersection(intersection, locations_1, locations_2):
     return index_1 + index_2 + 2
 
 
-f = open('input.txt', 'r')
+f = open('day_03/input.txt', 'r')
 wire_paths = f.readlines()
 f.close()
 

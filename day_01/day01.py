@@ -1,4 +1,4 @@
-f = open('input.txt', 'r')
+f = open("day_01/input.txt", "r")
 masses = f.readlines()
 f.close()
 
@@ -26,8 +26,8 @@ def fuel_recursive(mass):
         return 0
 
 
-print('Part 1')
-print('  Fuel for modules: {}'.format(sum(map(fuel, masses))))
+print("Part 1")
+print("  Fuel for modules: {}".format(sum(map(fuel, masses))))
 print()
-print('Part 2')
-print('  Fuel for modules: {}'.format(sum(map(fuel_recursive, masses))))
+print("Part 2")
+print("  Fuel for modules: {}".format(sum(map(fuel_recursive, masses))))

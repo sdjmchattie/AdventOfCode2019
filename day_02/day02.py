@@ -1,6 +1,6 @@
 from lib.int_code import IntCode
 
-f = open('input.txt', 'r')
+f = open('day_02/input.txt', 'r')
 cs_int_code = f.read()
 f.close()
 
