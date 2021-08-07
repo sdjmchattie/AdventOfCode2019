@@ -4,13 +4,17 @@ from enum import Enum
 class ValueMode(Enum):
     POSITION = 0
     IMMEDIATE = 1
+    RELATIVE = 2
 
 
 class IntCode:
     def __init__(self, code):
         self.initial_code = code
-        self.input = None
         self.reset()
+
+    @property
+    def output(self):
+        return self.outputs[-1]
 
     @property
     def completed(self):
@@ -18,8 +22,10 @@ class IntCode:
 
     def reset(self):
         self.pos = 0
-        self.code = list(self.initial_code)
-        self.output = None
+        self.code = { index: value for index, value in enumerate(self.initial_code) }
+        self.input = 0
+        self.outputs = []
+        self.relative_base = 0
 
     def run(self, max_steps=0, until_output=False):
         step_num = 0
@@ -39,7 +45,7 @@ class IntCode:
                     self.__set_value(self.pos + 1, self.input, value_modes[0])
                     self.pos += 2
                 elif op_code == 4:
-                    self.output = self.__get_value(self.pos + 1, value_modes[0])
+                    self.outputs.append(self.__get_value(self.pos + 1, value_modes[0]))
                     self.pos += 2
                     if until_output:
                         return
@@ -65,6 +71,9 @@ class IntCode:
                         new_value = 1
                     self.__set_value(self.pos + 3, new_value, value_modes[2])
                     self.pos += 4
+                elif op_code == 9:
+                    self.relative_base += self.__get_value(self.pos + 1, value_modes[0])
+                    self.pos += 2
                 else:
                     raise ValueError(f'Operator code {op_code} is not recognised.')
 
@@ -87,18 +96,29 @@ class IntCode:
         return op_code, value_modes
 
     def __get_value(self, position, mode):
-        if mode == ValueMode.POSITION:
-            return self.code[self.code[position]]
-        elif mode == ValueMode.IMMEDIATE:
-            return self.code[position]
-        else:
-            raise ValueError(f'Value Mode {mode} is not recognised.')
+        try:
+            if mode == ValueMode.POSITION:
+                mem_address = self.__get_value(position, ValueMode.IMMEDIATE)
+                return self.code[mem_address]
+            elif mode == ValueMode.IMMEDIATE:
+                return self.code[position]
+            elif mode == ValueMode.RELATIVE:
+                mem_address = self.__get_value(position, ValueMode.IMMEDIATE)
+                return self.code[mem_address + self.relative_base]
+            else:
+                raise ValueError(f'Value Mode {mode} is not recognised.')
+        except KeyError:
+            return 0
 
     def __set_value(self, position, new_value, mode):
         if mode == ValueMode.POSITION:
-            self.code[self.code[position]] = new_value
+            mem_address = self.__get_value(position, ValueMode.IMMEDIATE)
+            self.code[mem_address] = new_value
         elif mode == ValueMode.IMMEDIATE:
             self.code[position] = new_value
+        elif mode == ValueMode.RELATIVE:
+            mem_address = self.__get_value(position, ValueMode.IMMEDIATE)
+            self.code[mem_address + self.relative_base] = new_value
         else:
             raise ValueError(f'Value Mode {mode} is not recognised.')
 
