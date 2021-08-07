@@ -9,24 +9,23 @@ class ValueMode(Enum):
 class IntCode:
     def __init__(self, code):
         self.initial_code = code
-        self.pos = 0
-        self.code = None
         self.input = None
-        self.output = None
+        self.reset()
+
+    @property
+    def completed(self):
+        return self.code[self.pos] == 99
 
     def reset(self):
         self.pos = 0
         self.code = list(self.initial_code)
         self.output = None
 
-    def run(self, steps=0):
+    def run(self, max_steps=0, until_output=False):
         step_num = 0
 
-        if self.code is None:
-            self.reset()
-
         try:
-            while self.code[self.pos] != 99 and (steps == 0 or step_num < steps):
+            while not self.completed and (max_steps == 0 or step_num < max_steps):
                 step_num += 1
                 (op_code, value_modes) = self.__parse_op_code(self.pos)
 
@@ -42,6 +41,8 @@ class IntCode:
                 elif op_code == 4:
                     self.output = self.__get_value(self.pos + 1, value_modes[0])
                     self.pos += 2
+                    if until_output:
+                        return
                 elif op_code == 5:
                     if self.__get_value(self.pos + 1, value_modes[0]) != 0:
                         self.pos = self.__get_value(self.pos + 2, value_modes[1])
@@ -66,6 +67,7 @@ class IntCode:
                     self.pos += 4
                 else:
                     raise ValueError(f'Operator code {op_code} is not recognised.')
+
         except IndexError:
             pass
 
