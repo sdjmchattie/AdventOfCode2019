@@ -9,54 +9,63 @@ class ValueMode(Enum):
 class IntCode:
     def __init__(self, code):
         self.initial_code = code
+        self.pos = 0
         self.code = None
         self.input = None
         self.output = None
 
-    def run(self):
-        pos = 0
+    def reset(self):
+        self.pos = 0
         self.code = list(self.initial_code)
         self.output = None
 
+    def run(self, steps=0):
+        step_num = 0
+
+        if self.code is None:
+            self.reset()
+
         try:
-            while self.code[pos] != 99:
-                (op_code, value_modes) = self.__parse_op_code(pos)
+            while self.code[self.pos] != 99 and (steps == 0 or step_num < steps):
+                step_num += 1
+                (op_code, value_modes) = self.__parse_op_code(self.pos)
+
                 if op_code == 1:
-                    self.__add(pos + 1, value_modes)
-                    pos += 4
+                    self.__add(self.pos + 1, value_modes)
+                    self.pos += 4
                 elif op_code == 2:
-                    self.__multiply(pos + 1, value_modes)
-                    pos += 4
+                    self.__multiply(self.pos + 1, value_modes)
+                    self.pos += 4
                 elif op_code == 3:
-                    self.__set_value(pos + 1, self.input, value_modes[0])
-                    pos += 2
+                    self.__set_value(self.pos + 1, self.input, value_modes[0])
+                    self.pos += 2
                 elif op_code == 4:
-                    self.output = self.__get_value(pos + 1, value_modes[0])
-                    pos += 2
+                    self.output = self.__get_value(self.pos + 1, value_modes[0])
+                    self.pos += 2
                 elif op_code == 5:
-                    if self.__get_value(pos + 1, value_modes[0]) != 0:
-                        pos = self.__get_value(pos + 2, value_modes[1])
+                    if self.__get_value(self.pos + 1, value_modes[0]) != 0:
+                        self.pos = self.__get_value(self.pos + 2, value_modes[1])
                     else:
-                        pos += 3
+                        self.pos += 3
                 elif op_code == 6:
-                    if self.__get_value(pos + 1, value_modes[0]) == 0:
-                        pos = self.__get_value(pos + 2, value_modes[1])
+                    if self.__get_value(self.pos + 1, value_modes[0]) == 0:
+                        self.pos = self.__get_value(self.pos + 2, value_modes[1])
                     else:
-                        pos += 3
+                        self.pos += 3
                 elif op_code == 7:
                     new_value = 0
-                    if self.__get_value(pos + 1, value_modes[0]) < self.__get_value(pos + 2, value_modes[1]):
+                    if self.__get_value(self.pos + 1, value_modes[0]) < self.__get_value(self.pos + 2, value_modes[1]):
                         new_value = 1
-                    self.__set_value(pos + 3, new_value, value_modes[2])
-                    pos += 4
+                    self.__set_value(self.pos + 3, new_value, value_modes[2])
+                    self.pos += 4
                 elif op_code == 8:
                     new_value = 0
-                    if self.__get_value(pos + 1, value_modes[0]) == self.__get_value(pos + 2, value_modes[1]):
+                    if self.__get_value(self.pos + 1, value_modes[0]) == self.__get_value(self.pos + 2, value_modes[1]):
                         new_value = 1
-                    self.__set_value(pos + 3, new_value, value_modes[2])
-                    pos += 4
+                    self.__set_value(self.pos + 3, new_value, value_modes[2])
+                    self.pos += 4
                 else:
-                    raise ValueError('Operator code {} is not recognised.'.format(op_code))
+                    raise ValueError(f'Operator code {op_code} is not recognised.')
         except IndexError:
             pass
 
@@ -81,7 +90,7 @@ class IntCode:
         elif mode == ValueMode.IMMEDIATE:
             return self.code[position]
         else:
-            raise ValueError('Value Mode {} is not recognised.'.format(mode))
+            raise ValueError(f'Value Mode {mode} is not recognised.')
 
     def __set_value(self, position, new_value, mode):
         if mode == ValueMode.POSITION:
@@ -89,7 +98,7 @@ class IntCode:
         elif mode == ValueMode.IMMEDIATE:
             self.code[position] = new_value
         else:
-            raise ValueError('Value Mode {} is not recognised.'.format(mode))
+            raise ValueError(f'Value Mode {mode} is not recognised.')
 
     def __add(self, position, value_modes):
         op_result = self.__get_value(position, value_modes[0]) + self.__get_value(position + 1, value_modes[1])
