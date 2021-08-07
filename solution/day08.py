@@ -17,4 +17,24 @@ def solve():
 
   print()
   print("Part 2")
-  print(f"  Part 2: {0}")
+
+  def pixel_at(x, y, layer):
+    return layers_data[layer][x + y * IMAGE_WIDTH]
+
+  for y in range(IMAGE_HEIGHT):
+    print()
+    print('  ', end='')
+
+    for x in range(IMAGE_WIDTH):
+      layer = 0
+      while (pixel := pixel_at(x, y, layer)) == '2':
+        layer += 1
+
+      if pixel == '0':
+        pixel_char = '⬛️'
+      else:
+        pixel_char = '⬜️'
+
+      print(pixel_char, end='')
+
+  print('\n')
