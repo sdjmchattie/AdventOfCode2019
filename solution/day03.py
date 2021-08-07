@@ -51,29 +51,30 @@ def shortest_route_to_intersection(intersection, locations_1, locations_2):
     return index_1 + index_2 + 2
 
 
-f = open('day_03/input.txt', 'r')
-wire_paths = f.readlines()
-f.close()
+def solve():
+    f = open('input/day03.txt', 'r')
+    wire_paths = f.readlines()
+    f.close()
 
-wire_1_path = wire_paths[0].split(',')
-wire_2_path = wire_paths[1].split(',')
+    wire_1_path = wire_paths[0].split(',')
+    wire_2_path = wire_paths[1].split(',')
 
-wire_1_locations = wire_locations(wire_1_path)
-wire_2_locations = wire_locations(wire_2_path)
+    wire_1_locations = wire_locations(wire_1_path)
+    wire_2_locations = wire_locations(wire_2_path)
 
-wire_1_strings = list(map(lambda x: "{},{}".format(x[0], x[1]), wire_1_locations))
-wire_2_strings = list(map(lambda x: "{},{}".format(x[0], x[1]), wire_2_locations))
+    wire_1_strings = list(map(lambda x: "{},{}".format(x[0], x[1]), wire_1_locations))
+    wire_2_strings = list(map(lambda x: "{},{}".format(x[0], x[1]), wire_2_locations))
 
-intersections = list(set(wire_1_strings) & set(wire_2_strings))
-intersect_distances = map(csv_location_distance_from_origin, intersections)
+    intersections = list(set(wire_1_strings) & set(wire_2_strings))
+    intersect_distances = map(csv_location_distance_from_origin, intersections)
 
-print('Part 1')
-print('  Intersection distance nearest [0, 0]: {}'.format(min(intersect_distances)))
+    print('Part 1')
+    print('  Intersection distance nearest [0, 0]: {}'.format(min(intersect_distances)))
 
-combined_intersection_lengths = map(
-    lambda x: shortest_route_to_intersection(x, wire_1_strings, wire_2_strings),
-    intersections)
+    combined_intersection_lengths = map(
+        lambda x: shortest_route_to_intersection(x, wire_1_strings, wire_2_strings),
+        intersections)
 
-print()
-print('Part 2')
-print('  Shortest intersect combined lengths: {}'.format(min(combined_intersection_lengths)))
+    print()
+    print('Part 2')
+    print('  Shortest intersect combined lengths: {}'.format(min(combined_intersection_lengths)))

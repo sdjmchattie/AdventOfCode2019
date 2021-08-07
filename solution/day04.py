@@ -1,3 +1,6 @@
+MIN_PASSWORD = 357253
+MAX_PASSWORD = 892942
+
 def is_password_valid_1(int_password):
     str_digits = list(str(int_password))
     digits = list(map(lambda x: int(x), str_digits))
@@ -33,16 +36,14 @@ def is_password_valid_2(int_password):
     return first_pair_valid or middle_pair_valid or last_pair_valid
 
 
-min_password = 357253
-max_password = 892942
+def solve():
+    valid_passwords_1 = list(filter(is_password_valid_1, range(MIN_PASSWORD, MAX_PASSWORD + 1)))
 
-valid_passwords_1 = list(filter(is_password_valid_1, range(min_password, max_password + 1)))
+    print('Part 1')
+    print('  Total valid passwords: {}'.format(len(valid_passwords_1)))
 
-print('Part 1')
-print('  Total valid passwords: {}'.format(len(valid_passwords_1)))
+    valid_passwords_2 = list(filter(is_password_valid_2, valid_passwords_1))
 
-valid_passwords_2 = list(filter(is_password_valid_2, valid_passwords_1))
-
-print()
-print('Part 2')
-print('  Total valid passwords: {}'.format(len(valid_passwords_2)))
+    print()
+    print('Part 2')
+    print('  Total valid passwords: {}'.format(len(valid_passwords_2)))
