@@ -5,7 +5,7 @@ from lib.int_code import IntCode
 def make_amplifier(orig_code, phase_code):
   int_code = IntCode(orig_code)
   int_code.input = phase_code
-  int_code.run(max_steps = 1)
+  int_code.run(until_input = True)
 
   return int_code
 
@@ -40,7 +40,7 @@ def solve():
     while True:
       for amplifier in amplifiers:
         amplifier.input = output_code
-        amplifier.run(until_output=True)
+        amplifier.run(until_output = True)
         output_code = amplifier.output
 
       if amplifiers[-1].completed:

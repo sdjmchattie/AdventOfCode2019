@@ -4,4 +4,4 @@ from solution import (
 )
 
 if __name__ == '__main__':
-    day10.solve()
+    day07.solve()

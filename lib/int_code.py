@@ -27,12 +27,9 @@ class IntCode:
         self.outputs = []
         self.relative_base = 0
 
-    def run(self, max_steps=0, until_output=False):
-        step_num = 0
-
+    def run(self, until_input=False, until_output=False):
         try:
-            while not self.completed and (max_steps == 0 or step_num < max_steps):
-                step_num += 1
+            while not self.completed:
                 (op_code, value_modes) = self.__parse_op_code(self.pos)
 
                 if op_code == 1:
@@ -44,6 +41,8 @@ class IntCode:
                 elif op_code == 3:
                     self.__set_value(self.pos + 1, self.input, value_modes[0])
                     self.pos += 2
+                    if until_input:
+                        return
                 elif op_code == 4:
                     self.outputs.append(self.__get_value(self.pos + 1, value_modes[0]))
                     self.pos += 2
