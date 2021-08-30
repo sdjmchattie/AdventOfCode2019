@@ -5,7 +5,7 @@ from lib.int_code import IntCode
 def make_amplifier(orig_code, phase_code):
   int_code = IntCode(orig_code)
   int_code.input = phase_code
-  int_code.run(until_input = True)
+  int_code.run()
 
   return int_code
 
