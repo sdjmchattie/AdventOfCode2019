@@ -70,12 +70,6 @@ def solve():
   print("Part 1")
   print(f'  Number of block tiles = {arcade.count_tiles("#")}')
 
-  # print()
-  # for y in range(26):
-  #   for x in range(46):
-  #     print(arcade.tiles[(x, y)] or " ", end="")
-  #   print()
-
   new_code = list(orig_int_code)
   new_code[0] = 2
   arcade = ArcadeGame(new_code)
